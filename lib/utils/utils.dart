@@ -51,6 +51,11 @@ class Utils{
       LocalLocationData target = LocalLocationData.fromJson(decodes[i]);
       datas.add(target);
     }
-    return datas;
+    return datas.reversed.toList();
+  }
+
+  static Future<void> clearHistory()async {
+    const storage = FlutterSecureStorage();
+storage.deleteAll();
   }
 }

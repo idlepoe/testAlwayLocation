@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
 import '../../define/define.dart';
@@ -41,6 +42,14 @@ class _ListPageState extends State<ListPage> {
             style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          ElevatedButton(onPressed: (){
+            Utils.clearHistory();
+            setState(() {
+
+            });
+          }, child: Text("clear history"))
+        ],
       ),
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -78,7 +87,7 @@ class _ListPageState extends State<ListPage> {
                   height: 50,
                   width: MediaQuery.of(context).size.width,
                   child: ListTile(
-                    title: Text(_list[index].locationDateTime.toString()),
+                    title: Text(DateFormat('yyyy-MM-dd hh:mm').format(_list[index].locationDateTime)),
                     subtitle: Text(
                         _list[index].locationLongitude.toString() +
                             "," +

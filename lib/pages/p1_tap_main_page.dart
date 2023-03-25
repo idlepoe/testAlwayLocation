@@ -72,12 +72,6 @@ class _TapMainPageState extends State<TapMainPage>
         length: 2,
         child: SafeArea(
           child: Scaffold(
-            appBar: AppBar(
-                title: Text(
-                  "test",
-                  style: TextStyle(color: Colors.black),
-                ),
-                backgroundColor: Colors.white),
             body: TabBarView(
               controller: _tabController,
               children: [
