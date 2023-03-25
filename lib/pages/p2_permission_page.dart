@@ -17,7 +17,7 @@ class PermissionPage extends StatefulWidget {
 }
 
 class _PermissionPageState extends State<PermissionPage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   var logger = Logger();
 
   late Timer _timer;
@@ -134,4 +134,7 @@ class _PermissionPageState extends State<PermissionPage>
   cancelTimer() {
     _timer.cancel();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
