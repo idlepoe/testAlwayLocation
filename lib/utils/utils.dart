@@ -33,7 +33,7 @@ class Utils{
     var json = jsonEncode(datas);
 
     await storage.write(key: Define.KEYSTORE_LOCAL_LOCATION_DATA, value: json);
-    logger.d("[ローカルの位置情報登録]:${datas.toString()}");
+    // logger.d("[ローカルの位置情報登録]:${datas.toString()}");
   }
 
   /// ローカルの位置情報登録
@@ -58,4 +58,21 @@ class Utils{
     const storage = FlutterSecureStorage();
 storage.deleteAll();
   }
+
+  static Future<void> setActive()async {
+    const storage = FlutterSecureStorage();
+    await storage.write(key: "active", value: "test");
+  }
+  static Future<void> removeActive()async {
+    const storage = FlutterSecureStorage();
+    await storage.delete(key: "active");
+  }
+
+  static Future<bool> getActive()async {
+    const storage = FlutterSecureStorage();
+    String? result = await storage.read(key: "active",);
+    return result==null?false:true;
+  }
+
+
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 import 'package:test_alway_location/pages/tab/p3_list_page.dart';
 
@@ -20,20 +19,12 @@ class _TapMainPageState extends State<TapMainPage>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final TabController _tabController;
   var logger = Logger();
-  bool isAppInactive = false; // バックグラウンド、FOREGROUND区別
 
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addObserver(
-      LifecycleEventHandler(resumeCallBack: () async {
-        isAppInactive = false;
-      }, suspendingCallBack: () async {
-        isAppInactive = true;
-      }),
-    );
   }
 
   @override

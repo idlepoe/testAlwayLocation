@@ -76,16 +76,18 @@ Future<void> initializeService() async {
       onBackground: onIosBackground,
     ),
   );
+  service.startService();
 
   WidgetsBinding.instance.addObserver(
     LifecycleEventHandler(resumeCallBack: () async {
-      isAppInactive = false;
+      print("_isAppInactive = false;");
+      Utils.setActive();
     }, suspendingCallBack: () async {
-      isAppInactive = true;
+      print("_isAppInactive = true;");
+      Utils.removeActive();
     }),
   );
 
-  service.startService();
 }
 
 @pragma('vm:entry-point')
@@ -185,21 +187,22 @@ void onStart(ServiceInstance service) async {
 
 
 }
-bool isAppInactive = false; // バックグラウンド、FOREGROUND区別
 
 Future<void> startLocationService() async {
   var logger = Logger();
 
-  final _locationData =
-  await GeolocatorPlatform.instance.getCurrentPosition();
+  final _locationData = await GeolocatorPlatform.instance.getCurrentPosition();
+  bool isActive = await Utils.getActive();
+
+
   Utils.setLocationHistory(LocalLocationData(
       DateTime.now(),
       _locationData.latitude ?? 0,
       _locationData.longitude ?? 0,
-      isAppInactive));
+      !isActive));
   logger.d("位置情報保存：" +
       LocalLocationData(DateTime.now(), _locationData.latitude ?? 0,
-          _locationData.longitude ?? 0, isAppInactive)
+          _locationData.longitude ?? 0,!isActive)
           .toString());
 }
 
