@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 
-import '../define/define.dart';
-import '../define/lifeCycleEventHandler.dart';
-import '../models/localLocationData.dart';
-import '../utils/utils.dart';
+import '../../define/define.dart';
+import '../../define/lifeCycleEventHandler.dart';
+import '../../models/localLocationData.dart';
+import '../../utils/utils.dart';
 
 class PermissionPage extends StatefulWidget {
   const PermissionPage({Key? key}) : super(key: key);
@@ -19,6 +20,7 @@ class PermissionPage extends StatefulWidget {
 class _PermissionPageState extends State<PermissionPage>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   var logger = Logger();
+  String text = "Stop Service";
 
   late Timer _timer;
   bool isAppInactive = false; // バックグラウンド、FOREGROUND区別
@@ -62,7 +64,26 @@ class _PermissionPageState extends State<PermissionPage>
                   onPressed: () {
                     locationServiceSubscription();
                   },
-                  child: Text("locationServiceSubscription"))
+                  child: Text("locationServiceSubscription")),
+              ElevatedButton(
+                child: Text(text),
+                onPressed: () async {
+                  final service = FlutterBackgroundService();
+                  var isRunning = await service.isRunning();
+                  if (isRunning) {
+                    service.invoke("stopService");
+                  } else {
+                    service.startService();
+                  }
+
+                  if (!isRunning) {
+                    text = 'Stop Service';
+                  } else {
+                    text = 'Start Service';
+                  }
+                  setState(() {});
+                },
+              ),
             ],
           ),
         ),

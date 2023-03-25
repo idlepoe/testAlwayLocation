@@ -1,8 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:test_alway_location/pages/p3_list_page.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:logger/logger.dart';
+import 'package:test_alway_location/pages/tab/p3_list_page.dart';
 
-import 'p2_permission_page.dart';
+import '../define/lifeCycleEventHandler.dart';
+import '../models/localLocationData.dart';
+import '../utils/utils.dart';
+import 'tab/p2_permission_page.dart';
 
 class TapMainPage extends StatefulWidget {
   const TapMainPage({Key? key}) : super(key: key);
@@ -14,12 +19,21 @@ class TapMainPage extends StatefulWidget {
 class _TapMainPageState extends State<TapMainPage>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final TabController _tabController;
+  var logger = Logger();
+  bool isAppInactive = false; // バックグラウンド、FOREGROUND区別
 
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addObserver(
+      LifecycleEventHandler(resumeCallBack: () async {
+        isAppInactive = false;
+      }, suspendingCallBack: () async {
+        isAppInactive = true;
+      }),
+    );
   }
 
   @override
@@ -86,4 +100,6 @@ class _TapMainPageState extends State<TapMainPage>
       ),
     );
   }
+
+
 }
