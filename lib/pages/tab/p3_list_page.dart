@@ -43,11 +43,12 @@ class _ListPageState extends State<ListPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
-          ElevatedButton(onPressed: (){
-            Utils.clearHistory();
-            setState(() {
-
-            });
+          TextButton(onPressed: () async {
+            await  getList();
+          }, child: Text("get list")),
+          TextButton(onPressed: () async {
+            await Utils.clearHistory();
+            await  getList();
           }, child: Text("clear history"))
         ],
       ),
@@ -118,6 +119,10 @@ class _ListPageState extends State<ListPage> {
 
   Future<void>init() async {
 
+getList();
+  }
+
+  Future<void> getList()async {
     var result = await Geolocator.checkPermission();
     _locationPermissionString = result.name;
     var result1 = await Utils.getLocationHistory();

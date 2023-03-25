@@ -157,29 +157,29 @@ void onStart(ServiceInstance service) async {
     }
 
     /// you can see this log in logcat
-    // print('FLUTTER BACKGROUND SERVICE: ${DateTime.now()}');
-    //
-    // // test using external plugin
-    // final deviceInfo = DeviceInfoPlugin();
-    // String? device;
-    // if (Platform.isAndroid) {
-    //   final androidInfo = await deviceInfo.androidInfo;
-    //   device = androidInfo.model;
-    // }
-    //
-    // if (Platform.isIOS) {
-    //   final iosInfo = await deviceInfo.iosInfo;
-    //   device = iosInfo.model;
-    // }
-    //
-    // service.invoke(
-    //   'update',
-    //   {
-    //     "current_date": DateTime.now().toIso8601String(),
-    //     "device": device,
-    //   },
-    //
-    // );
+    print('FLUTTER BACKGROUND SERVICE: ${DateTime.now()}');
+
+    // test using external plugin
+    final deviceInfo = DeviceInfoPlugin();
+    String? device;
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      device = androidInfo.model;
+    }
+
+    if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      device = iosInfo.model;
+    }
+
+    service.invoke(
+      'update',
+      {
+        "current_date": DateTime.now().toIso8601String(),
+        "device": device,
+      },
+
+    );
     startLocationService();
   });
 
