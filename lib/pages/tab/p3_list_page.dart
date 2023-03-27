@@ -130,6 +130,6 @@ getList();
     setState(() {
       _list = result1;
     });
-    logger.d("getDateLocationHistory()", _list.toString());
+    // logger.d("getDateLocationHistory()", _list.toString());
   }
 }

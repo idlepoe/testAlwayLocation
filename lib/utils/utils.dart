@@ -10,7 +10,7 @@ import '../models/localLocationData.dart';
 class Utils{
   static Future<void> setLocationHistory(LocalLocationData newData) async {
     var logger = Logger();
-    logger.d("setLocationHistory");
+    logger.d("setLocationHistory"+newData.toString());
     List<LocalLocationData> old = await getLocationHistory();
     old.add(newData);
     var jsonNew = jsonEncode({"list": old});
@@ -28,7 +28,7 @@ class Utils{
     const storage = FlutterSecureStorage();
     String? value =
     await storage.read(key: Define.KEYSTORE_LOCAL_LOCATION_DATA);
-    logger.d(value);
+    // logger.d(value);
 
     if(value==null){
       return [];
@@ -36,7 +36,7 @@ class Utils{
 
 
     List<dynamic> decodes = value != null ? jsonDecode(value)["list"] : [];
-    logger.d(decodes);
+    // logger.d(decodes);
 
     List<LocalLocationData> datas = [];
     for (var i = 0; i < decodes.length; i++) {

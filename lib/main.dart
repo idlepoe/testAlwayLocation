@@ -1,13 +1,12 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:background_location_tracker/background_location_tracker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:logger/logger.dart';
 import 'package:test_alway_location/pages/p1_tap_main_page.dart';
 import 'package:test_alway_location/utils/utils.dart';
 
+import 'define/lifeCycleEventHandler.dart';
 import 'models/localLocationData.dart';
 
 @pragma('vm:entry-point')
@@ -54,15 +53,37 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Repo {
+class Repo extends State {
+  var logger = Logger();
   static Repo? _instance;
+  bool isAppInactive = false; // バックグラウンド、FOREGROUND区別
 
   Repo._();
 
   factory Repo() => _instance ??= Repo._();
 
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(
+      LifecycleEventHandler(resumeCallBack: () async {
+        isAppInactive = false;
+        logger.d("isAppInactive:"+isAppInactive.toString());
+      }, suspendingCallBack: () async {
+        isAppInactive = true;
+        logger.d("isAppInactive:"+isAppInactive.toString());
+      }),
+    );
+  }
+
   Future<void> update(BackgroundLocationUpdateData data) async {
     await Utils.setLocationHistory(
-        LocalLocationData(DateTime.now(), data.lat ?? 0, data.lon ?? 0, false));
+        LocalLocationData(DateTime.now(), data.lat, data.lon, isAppInactive));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text("");
   }
 }
