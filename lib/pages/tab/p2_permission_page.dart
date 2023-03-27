@@ -1,12 +1,14 @@
 import 'dart:async';
 
+import 'package:background_location_tracker/background_location_tracker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../define/define.dart';
 import '../../define/lifeCycleEventHandler.dart';
+import '../../main.dart';
 import '../../models/localLocationData.dart';
 import '../../utils/utils.dart';
 
@@ -25,12 +27,21 @@ class _PermissionPageState extends State<PermissionPage>
   late Timer _timer;
   bool isAppInactive = false; // バックグラウンド、FOREGROUND区別
 
+  var isTracking = false;
+
+  List<String> _locations = [];
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(
-        Duration(seconds: Define.CHECK_LOCATION_INTERVAL_SECOND), (timer) {});
-    _timer.cancel();
+    _getTrackingStatus();
+    _startLocationsUpdatesStream();
 
     WidgetsBinding.instance.addObserver(
       LifecycleEventHandler(resumeCallBack: () async {
@@ -60,30 +71,45 @@ class _PermissionPageState extends State<PermissionPage>
                   },
                   child: Text("getLocationPermission")),
               Text("_timer.isActive:" + _timer.isActive.toString()),
-              ElevatedButton(
-                  onPressed: () {
-                    locationServiceSubscription();
-                  },
-                  child: Text("locationServiceSubscription")),
-              ElevatedButton(
-                child: Text(text),
-                onPressed: () async {
-                  final service = FlutterBackgroundService();
-                  var isRunning = await service.isRunning();
-                  if (isRunning) {
-                    service.invoke("stopService");
-                  } else {
-                    service.startService();
-                  }
-
-                  if (!isRunning) {
-                    text = 'Stop Service';
-                  } else {
-                    text = 'Start Service';
-                  }
-                  setState(() {});
-                },
+              MaterialButton(
+                child: const Text('Start Tracking'),
+                onPressed: isTracking
+                    ? null
+                    : () async {
+                        await BackgroundLocationTrackerManager.startTracking();
+                        setState(() => isTracking = true);
+                      },
               ),
+              MaterialButton(
+                child: const Text('Stop Tracking'),
+                onPressed: isTracking
+                    ? () async {
+                        await LocationDao().clear();
+                        await _getLocations();
+                        await BackgroundLocationTrackerManager.stopTracking();
+                        setState(() => isTracking = false);
+                      }
+                    : null,
+              ),
+              // ElevatedButton(
+              //   child: Text(text),
+              //   onPressed: () async {
+              //     final service = FlutterBackgroundService();
+              //     var isRunning = await service.isRunning();
+              //     if (isRunning) {
+              //       service.invoke("stopService");
+              //     } else {
+              //       service.startService();
+              //     }
+              //
+              //     if (!isRunning) {
+              //       text = 'Stop Service';
+              //     } else {
+              //       text = 'Start Service';
+              //     }
+              //     setState(() {});
+              //   },
+              // ),
             ],
           ),
         ),
@@ -133,15 +159,13 @@ class _PermissionPageState extends State<PermissionPage>
       logger.d("interval locationServiceSubscription");
       await startLocationService();
     });
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   Future<void> startLocationService() async {
     final _locationData =
         await GeolocatorPlatform.instance.getCurrentPosition();
-    Utils.setLocationHistory(LocalLocationData(
+    await Utils.setLocationHistory(LocalLocationData(
         DateTime.now(),
         _locationData.latitude ?? 0,
         _locationData.longitude ?? 0,
@@ -158,4 +182,39 @@ class _PermissionPageState extends State<PermissionPage>
 
   @override
   bool get wantKeepAlive => true;
+
+  Future<void> _getTrackingStatus() async {
+    isTracking = await BackgroundLocationTrackerManager.isTracking();
+    setState(() {});
+  }
+
+  Future<void> _requestLocationPermission() async {
+    final result = await Permission.locationAlways.request();
+    if (result == PermissionStatus.granted) {
+      print('GRANTED'); // ignore: avoid_print
+    } else {
+      print('NOT GRANTED'); // ignore: avoid_print
+    }
+  }
+
+  Future<void> _requestNotificationPermission() async {
+    final result = await Permission.notification.request();
+    if (result == PermissionStatus.granted) {
+      print('GRANTED'); // ignore: avoid_print
+    } else {
+      print('NOT GRANTED'); // ignore: avoid_print
+    }
+  }
+
+  Future<void> _getLocations() async {
+    final locations = await LocationDao().getLocations();
+    setState(() {
+      _locations = locations;
+    });
+  }
+
+  void _startLocationsUpdatesStream() {
+    _timer = Timer.periodic(
+        const Duration(milliseconds: 250), (timer) => _getLocations());
+  }
 }
