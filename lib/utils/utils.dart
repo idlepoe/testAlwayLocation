@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
 import '../define/define.dart';
@@ -37,12 +38,19 @@ class Utils {
     }
 
     List<dynamic> decodes = value != null ? jsonDecode(value)["list"] : [];
-    // logger.d(decodes);
+    logger.d(decodes);
+
+    DateTime? lastTime;
 
     List<LocalLocationData> datas = [];
     for (var i = 0; i < decodes.length; i++) {
       LocalLocationData target = LocalLocationData.fromJson(decodes[i]);
-      datas.add(target);
+
+      DateTime targetTime = target.locationDateTime;
+      if (lastTime == null || targetTime.difference(lastTime).inMinutes.abs() > Define.HISTORY_INTERVAL) {
+        datas.add(target);
+        lastTime = target.locationDateTime;
+      }
     }
     return datas.reversed.toList();
   }
