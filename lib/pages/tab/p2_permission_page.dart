@@ -5,9 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 
-import '../../define/lifeCycleEventHandler.dart';
-import '../../main.dart';
-
 class PermissionPage extends StatefulWidget {
   const PermissionPage({Key? key}) : super(key: key);
 
@@ -16,11 +13,9 @@ class PermissionPage extends StatefulWidget {
 }
 
 class _PermissionPageState extends State<PermissionPage>
-    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin {
   var logger = Logger();
   String text = "Stop Service";
-
-  bool isAppInactive = false; // バックグラウンド、FOREGROUND区別
 
   var isTracking = false;
 
@@ -28,14 +23,6 @@ class _PermissionPageState extends State<PermissionPage>
   void initState() {
     super.initState();
     _getTrackingStatus();
-
-    // WidgetsBinding.instance.addObserver(
-    //   LifecycleEventHandler(resumeCallBack: () async {
-    //     isAppInactive = false;
-    //   }, suspendingCallBack: () async {
-    //     isAppInactive = true;
-    //   }),
-    // );
   }
 
   String permissionStatus = "";
@@ -75,7 +62,6 @@ class _PermissionPageState extends State<PermissionPage>
                       }
                     : null,
               ),
-              Repo().build(context),
             ],
           ),
         ),

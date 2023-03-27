@@ -6,12 +6,12 @@ class LocalLocationData {
   DateTime locationDateTime;
   double locationLatitude;
   double locationLongitude;
-  bool isAppInactive;
+  bool isAppActive;
 
   LocalLocationData.init() : this(DateTime.now(), 0, 0, false);
 
   LocalLocationData(this.locationDateTime, this.locationLatitude,
-      this.locationLongitude, this.isAppInactive);
+      this.locationLongitude, this.isAppActive);
 
   factory LocalLocationData.fromJson(Map<String, dynamic> json) {
     return _$LocalLocationDataFromJson(json);
@@ -21,6 +21,6 @@ class LocalLocationData {
 
   @override
   String toString() {
-    return 'LocalLocationData{locationDateTime: $locationDateTime, locationLatitude: $locationLatitude, locationLongitude: $locationLongitude, isAppInactive: $isAppInactive}';
+    return 'LocalLocationData{locationDateTime: $locationDateTime, locationLatitude: $locationLatitude, locationLongitude: $locationLongitude, isAppActive: $isAppActive}';
   }
 }

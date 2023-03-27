@@ -11,7 +11,7 @@ LocalLocationData _$LocalLocationDataFromJson(Map<String, dynamic> json) =>
       DateTime.parse(json['locationDateTime'] as String),
       (json['locationLatitude'] as num).toDouble(),
       (json['locationLongitude'] as num).toDouble(),
-      json['isAppInactive'] as bool,
+      json['isAppActive'] as bool,
     );
 
 Map<String, dynamic> _$LocalLocationDataToJson(LocalLocationData instance) =>
@@ -19,5 +19,5 @@ Map<String, dynamic> _$LocalLocationDataToJson(LocalLocationData instance) =>
       'locationDateTime': instance.locationDateTime.toIso8601String(),
       'locationLatitude': instance.locationLatitude,
       'locationLongitude': instance.locationLongitude,
-      'isAppInactive': instance.isAppInactive,
+      'isAppActive': instance.isAppActive,
     };

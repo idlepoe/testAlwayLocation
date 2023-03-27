@@ -7,16 +7,18 @@ import 'package:logger/logger.dart';
 import '../define/define.dart';
 import '../models/localLocationData.dart';
 
-class Utils{
+class Utils {
   static Future<void> setLocationHistory(LocalLocationData newData) async {
     var logger = Logger();
-    logger.d("setLocationHistory"+newData.toString());
+    logger.d("setLocationHistory" + newData.toString());
     List<LocalLocationData> old = await getLocationHistory();
+    newData.isAppActive = await Utils.getActive();
     old.add(newData);
     var jsonNew = jsonEncode({"list": old});
-    FlutterSecureStorage storage =FlutterSecureStorage();
+    FlutterSecureStorage storage = FlutterSecureStorage();
 
-    await storage.write(key: Define.KEYSTORE_LOCAL_LOCATION_DATA, value: jsonNew);
+    await storage.write(
+        key: Define.KEYSTORE_LOCAL_LOCATION_DATA, value: jsonNew);
   }
 
   /// ローカルの位置情報登録
@@ -27,13 +29,12 @@ class Utils{
 
     const storage = FlutterSecureStorage();
     String? value =
-    await storage.read(key: Define.KEYSTORE_LOCAL_LOCATION_DATA);
+        await storage.read(key: Define.KEYSTORE_LOCAL_LOCATION_DATA);
     // logger.d(value);
 
-    if(value==null){
+    if (value == null) {
       return [];
     }
-
 
     List<dynamic> decodes = value != null ? jsonDecode(value)["list"] : [];
     // logger.d(decodes);
@@ -46,25 +47,30 @@ class Utils{
     return datas.reversed.toList();
   }
 
-  static Future<void> clearHistory()async {
+  static Future<void> clearHistory() async {
     const storage = FlutterSecureStorage();
-storage.deleteAll();
+    storage.deleteAll();
   }
 
-  static Future<void> setActive()async {
+  static Future<void> setActive() async {
+    var logger = Logger();
+    logger.d("Active");
     const storage = FlutterSecureStorage();
     await storage.write(key: "active", value: "test");
   }
-  static Future<void> removeActive()async {
+
+  static Future<void> inActive() async {
+    var logger = Logger();
+    logger.d("InActive");
     const storage = FlutterSecureStorage();
     await storage.delete(key: "active");
   }
 
-  static Future<bool> getActive()async {
+  static Future<bool> getActive() async {
     const storage = FlutterSecureStorage();
-    String? result = await storage.read(key: "active",);
-    return result==null?false:true;
+    String? result = await storage.read(
+      key: "active",
+    );
+    return result == null ? false : true;
   }
-
-
 }

@@ -94,9 +94,9 @@ class _ListPageState extends State<ListPage> {
                             "," +
                             _list[index].locationLatitude.toString() +
                             "(" +
-                            ((_list[index].isAppInactive ?? false)
-                                ? "BACKGROUND"
-                                : "FOREGROUND") +
+                            ((_list[index].isAppActive )
+                                ? "FOREGROUND"
+                                : "BACKGROUND") +
                             ")"),
                   ),
                 ),

@@ -1,10 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:test_alway_location/pages/tab/p3_list_page.dart';
 
-import '../define/lifeCycleEventHandler.dart';
-import '../models/localLocationData.dart';
 import '../utils/utils.dart';
 import 'tab/p2_permission_page.dart';
 
@@ -48,11 +45,12 @@ class _TapMainPageState extends State<TapMainPage>
   }
 
   Future<void> resumeCallBack() async {
-    print("resumeCallBack");
+    await Utils.setActive();
+
   }
 
   Future<void> detachedCallBack() async {
-    print("detachedCallBack");
+    await Utils.inActive();
   }
 
   @override
@@ -85,6 +83,4 @@ class _TapMainPageState extends State<TapMainPage>
       ),
     );
   }
-
-
 }
