@@ -38,18 +38,20 @@ class Utils {
     }
 
     List<dynamic> decodes = value != null ? jsonDecode(value)["list"] : [];
-    logger.d(decodes);
+    // logger.d(decodes);
 
-    DateTime? lastTime;
+    String lastTime = "";
 
     List<LocalLocationData> datas = [];
     for (var i = 0; i < decodes.length; i++) {
       LocalLocationData target = LocalLocationData.fromJson(decodes[i]);
 
-      DateTime targetTime = target.locationDateTime;
-      if (lastTime == null || targetTime.difference(lastTime).inMinutes.abs() > Define.HISTORY_INTERVAL) {
+      String targetTime =
+          DateFormat('yyyy-MM-dd hh:mm').format(target.locationDateTime);
+      if (lastTime.isEmpty || targetTime != lastTime) {
         datas.add(target);
-        lastTime = target.locationDateTime;
+        lastTime =
+            DateFormat('yyyy-MM-dd hh:mm').format(target.locationDateTime);
       }
     }
     return datas.reversed.toList();
