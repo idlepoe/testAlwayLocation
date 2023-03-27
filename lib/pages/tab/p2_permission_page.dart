@@ -84,7 +84,6 @@ class _PermissionPageState extends State<PermissionPage>
                 child: const Text('Stop Tracking'),
                 onPressed: isTracking
                     ? () async {
-                        await LocationDao().clear();
                         await _getLocations();
                         await BackgroundLocationTrackerManager.stopTracking();
                         setState(() => isTracking = false);
