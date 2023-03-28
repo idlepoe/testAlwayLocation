@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../define/define.dart';
 import '../models/localLocationData.dart';
@@ -16,10 +17,10 @@ class Utils {
     newData.isAppActive = await Utils.getActive();
     old.add(newData);
     var jsonNew = jsonEncode({"list": old});
-    FlutterSecureStorage storage = FlutterSecureStorage();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    await storage.write(
-        key: Define.KEYSTORE_LOCAL_LOCATION_DATA, value: jsonNew);
+    await prefs.setString(
+         Define.KEYSTORE_LOCAL_LOCATION_DATA, jsonNew);
   }
 
   /// ローカルの位置情報登録
@@ -28,9 +29,9 @@ class Utils {
   static Future<List<LocalLocationData>> getLocationHistory() async {
     var logger = Logger();
 
-    const storage = FlutterSecureStorage();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? value =
-        await storage.read(key: Define.KEYSTORE_LOCAL_LOCATION_DATA);
+        await prefs.getString( Define.KEYSTORE_LOCAL_LOCATION_DATA);
     // logger.d(value);
 
     if (value == null) {
@@ -58,29 +59,27 @@ class Utils {
   }
 
   static Future<void> clearHistory() async {
-    const storage = FlutterSecureStorage();
-    storage.deleteAll();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
   }
 
   static Future<void> setActive() async {
     var logger = Logger();
     logger.d("Active");
-    const storage = FlutterSecureStorage();
-    await storage.write(key: "active", value: "test");
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool( "active", true);
   }
 
   static Future<void> inActive() async {
     var logger = Logger();
     logger.d("InActive");
-    const storage = FlutterSecureStorage();
-    await storage.delete(key: "active");
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool( "active", false);
   }
 
   static Future<bool> getActive() async {
-    const storage = FlutterSecureStorage();
-    String? result = await storage.read(
-      key: "active",
-    );
-    return result == null ? false : true;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? result = prefs.getBool( "active");
+    return result??true;
   }
 }
