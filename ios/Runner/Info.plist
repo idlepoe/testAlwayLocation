@@ -55,12 +55,7 @@
 <string>This app needs access to location.</string>
 <key>UIBackgroundModes</key>
 <array>
-	<string>fetch</string>
 	<string>location</string>
-</array>
-<key>BGTaskSchedulerPermittedIdentifiers</key>
-<array>
-    <string>dev.flutter.background.refresh</string>
 </array>
 </dict>
 </plist>
