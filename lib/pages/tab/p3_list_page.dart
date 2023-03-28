@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../define/define.dart';
 import '../../models/localLocationData.dart';
@@ -18,10 +17,8 @@ class ListPage extends StatefulWidget {
 class _ListPageState extends State<ListPage> {
   var logger = Logger();
 
-
   List<LocalLocationData> _list = [];
   String _locationPermissionString = "";
-
 
 
   final Widget _optionDivider = Divider(
@@ -31,25 +28,26 @@ class _ListPageState extends State<ListPage> {
     color: Colors.grey,
   );
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("位置情報取得状況確認",
-            style: TextStyle(color: Colors.black)),
+        title: Text("位置情報取得状況確認", style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
-          TextButton(onPressed: () async {
-            await  getList();
-          }, child: Text("get list")),
-          TextButton(onPressed: () async {
-            await Utils.clearHistory();
-            await  getList();
-          }, child: Text("clear history"))
+          TextButton(
+              onPressed: () async {
+                await getList();
+              },
+              child: Text("get list")),
+          TextButton(
+              onPressed: () async {
+                await Utils.clearHistory();
+                await getList();
+              },
+              child: Text("clear history"))
         ],
       ),
       body: SingleChildScrollView(
@@ -88,16 +86,16 @@ class _ListPageState extends State<ListPage> {
                   height: 50,
                   width: MediaQuery.of(context).size.width,
                   child: ListTile(
-                    title: Text(DateFormat('yyyy-MM-dd hh:mm').format(_list[index].locationDateTime)),
-                    subtitle: Text(
-                        _list[index].locationLongitude.toString() +
-                            "," +
-                            _list[index].locationLatitude.toString() +
-                            "(" +
-                            ((_list[index].isAppActive )
-                                ? "FOREGROUND"
-                                : "BACKGROUND") +
-                            ")"),
+                    title: Text(DateFormat('yyyy-MM-dd hh:mm')
+                        .format(_list[index].locationDateTime)),
+                    subtitle: Text(_list[index].locationLongitude.toString() +
+                        "," +
+                        _list[index].locationLatitude.toString() +
+                        "(" +
+                        ((_list[index].isAppActive)
+                            ? "FOREGROUND"
+                            : "BACKGROUND") +
+                        ")"),
                   ),
                 ),
                 separatorBuilder: (context, index) => SizedBox(width: 8),
@@ -114,20 +112,20 @@ class _ListPageState extends State<ListPage> {
   void initState() {
     super.initState();
     init();
-
   }
 
-  Future<void>init() async {
-
-getList();
+  Future<void> init() async {
+    getList();
   }
 
-  Future<void> getList()async {
-    var result = await Geolocator.checkPermission();
-    _locationPermissionString = result.name;
-    var result1 = await Utils.getLocationHistory();
+  Future<void> getList() async {
+    logger.d("listpage get list");
+    var result1 = await Utils.getLocationHistoryReverse();
+    logger.d("listpage get list:"+result1.length.toString());
+
     // 位置情報取得
     setState(() {
+      _list=[];
       _list = result1;
     });
     // logger.d("getDateLocationHistory()", _list.toString());

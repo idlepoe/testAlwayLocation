@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_alway_location/pages/tab/p3_list_page.dart';
 
 import '../utils/utils.dart';
@@ -19,8 +20,12 @@ class _TapMainPageState extends State<TapMainPage>
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
     super.initState();
+init();
+  }
+
+  init() async {
+    _tabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addObserver(this);
   }
 

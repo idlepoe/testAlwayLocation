@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:background_location_tracker/background_location_tracker.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_alway_location/pages/p1_tap_main_page.dart';
 import 'package:test_alway_location/utils/utils.dart';
 
@@ -18,6 +19,7 @@ void backgroundCallback() {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Utils.init();
   await BackgroundLocationTrackerManager.initialize(
     backgroundCallback,
     config: BackgroundLocationTrackerConfig(
@@ -60,7 +62,9 @@ class Repo  {
   Repo._();
 
   factory Repo() => _instance ??= Repo._();
-
+  SharedPreferences? _prefs;
+  Future<SharedPreferences> get prefs async =>
+      _prefs ??= await SharedPreferences.getInstance();
 
   Future<void> update(BackgroundLocationUpdateData data) async {
     await Utils.setLocationHistory(
